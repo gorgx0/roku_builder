@@ -65,7 +65,8 @@ module RokuBuilder
           add_warning(warning: :packageSourceDirectory, path: "source")
         end
         @warnings.concat(raf_inspector.run(analyzer_config[:inspectors]))
-        print_warnings(dir) unless quiet
+        format_messages(dir)
+        print_warnings unless quiet
       end
       @warnings
     end
@@ -86,20 +87,15 @@ module RokuBuilder
       @warnings.last[:path] = path
     end
 
-    def print_warnings(dir)
+    def print_warnings
       logger = ::Logger.new(STDOUT)
       logger.level  = @logger.level
       logger.formatter = proc {|severity, _datetime, _progname, msg|
         "%5s: %s\n\r" % [severity, msg]
       }
+      @logger.unknown "====== Analysis Results ======"
       @warnings.each do |warning|
         message = warning[:message]
-        if warning[:path]
-          warning[:path].slice!(dir) if dir
-          warning[:path].slice!(/^\//)
-          message += ". pkg:/"+warning[:path]
-          message += ":"+(warning[:line]+1).to_s if warning[:line]
-        end
         case(warning[:severity])
         when "error"
           logger.error(message)
@@ -107,6 +103,17 @@ module RokuBuilder
           logger.warn(message)
         when "info"
           logger.info(message)
+        end
+      end
+    end
+
+    def format_messages(dir)
+      @warnings.each do |warning|
+        if warning[:path]
+          warning[:path].slice!(dir) if dir
+          warning[:path].slice!(/^\//)
+          warning[:message] += ". pkg:/"+warning[:path]
+          warning[:message] += ":"+(warning[:line]+1).to_s if warning[:line]
         end
       end
     end

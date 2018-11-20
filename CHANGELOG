@@ -1,3 +1,9 @@
+ = 4.9.3 =
+
+ - Fix crash on invlaid config
+ - Prevent loading incompatable file types
+ - Update Analyzer results for API access
+
  = 4.9.2 =
 
  - Cosmetic fixes
