@@ -30,7 +30,6 @@ module RokuBuilder
     def analyze(options:, quiet: false)
       @options = options
       @warnings = []
-      plugin_config = get_config(".roku_builder_analyze.json", true) || {}
       analyzer_config = get_config("inspector_config.json")
       performance_config = get_config("performance_config.json")
       @inspector_config = analyzer_config[:inspectors]
@@ -41,7 +40,7 @@ module RokuBuilder
         manifest_inspector = ManifestInspector.new(config: @config, dir: dir, raf: raf_inspector)
         @warnings.concat(manifest_inspector.run(analyzer_config[:inspectors]))
         has_source_dir = false
-        libraries = plugin_config[:libraries]
+        libraries = @config.project[:libraries]
         libraries ||= []
         Dir.glob(File.join(dir, "**", "*")).each do |file_path|
           file = file_path.dup; file.slice!(dir)

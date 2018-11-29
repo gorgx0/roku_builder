@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    roku_builder (4.9.3)
+    roku_builder (4.9.4)
       faraday (~> 0.13)
       faraday-digestauth (~> 0.2)
       git (~> 1.3)
@@ -30,7 +30,7 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     docile (1.3.1)
-    faraday (0.15.3)
+    faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     faraday-digestauth (0.3.0)
       faraday (~> 0.7)
@@ -137,4 +137,4 @@ DEPENDENCIES
   yard (~> 0.9)
 
 BUNDLED WITH
-   1.16.1
+   1.17.1

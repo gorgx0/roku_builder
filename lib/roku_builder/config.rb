@@ -192,7 +192,7 @@ module RokuBuilder
     end
 
     def fix_project_config_symbol_values
-      if @config[:projects] [:default]
+      if @config[:projects][:default]
         @config[:projects][:default] = @config[:projects][:default].to_sym
       end
       @config[:projects].each_pair do |key,value|
