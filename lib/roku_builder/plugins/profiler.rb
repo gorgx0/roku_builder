@@ -26,11 +26,16 @@ module RokuBuilder
         options[:devlog] = t || "rendezvous"
         options[:devlog_function] = f
       end
+      parser.separator "Options:"
+      parser.on("--add-ids", "Add ids to stats command") do
+        options[:add_ids] = true
+      end
     end
 
     # Run the profiler commands
     # @param command [Symbol] The profiler command to run
     def profile(options:)
+      @options = options
       @connection = nil
       case options[:profile].to_sym
       when :stats
@@ -103,23 +108,34 @@ module RokuBuilder
       start_reg = /<All_Nodes>/
       lines = get_command_response(command: "sgnodes all", start_reg: start_reg, end_reg: end_reg)
       xml_string = lines.join("\n")
-      stats = {"Total" => 0}
+      stats = {"Total" => {count: 0}}
       doc = Oga.parse_xml(xml_string)
       handle_node(stats: stats, node: doc.children.first)
       stats = stats.to_a
-      stats = stats.sort {|a, b| b[1] <=> a[1]}
-      printf "%30s | %5s\n", "Name", "Count"
+      stats = stats.sort {|a, b| b[1][:count] <=> a[1][:count]}
+      if @options[:add_ids]
+        printf "%30s | %5s | %s\n", "Name", "Count", "Ids"
+      else
+        printf "%30s | %5s\n", "Name", "Count"
+      end
       stats.each do |key_pair|
-        printf "%30s | %5d\n", key_pair[0], key_pair[1]
+        printf "%30s | %5d ", key_pair[0], key_pair[1][:count]
+        if @options[:add_ids] and key_pair[1][:ids] and key_pair[1][:ids].count > 0
+          id_string = key_pair[1][:ids].join(",")
+          printf "[#{id_string}]"
+        end
+        printf "\n"
       end
     end
 
     def handle_node(stats:,  node:)
       node.children.each do |element|
         next unless element.class == Oga::XML::Element
-        stats[element.name] ||= 0
-        stats[element.name] += 1
-        stats["Total"] += 1
+        attributes = element.attributes.map{|attr| {"#{attr.name}": attr.value}}.reduce({}, :merge)
+        stats[element.name] ||= {count: 0, ids: []}
+        stats[element.name][:count] += 1
+        stats[element.name][:ids].push(attributes[:name]) if attributes[:name]
+        stats["Total"][:count] += 1
         handle_node(stats: stats, node: element)
       end
     end
