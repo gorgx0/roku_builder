@@ -10,7 +10,8 @@ module RokuBuilder
       {
         profile: {device: true},
         sgperf: {device: true},
-        devlog: {device: true}
+        devlog: {device: true},
+        node_tracking: {device: true}
       }
     end
 
@@ -26,6 +27,10 @@ module RokuBuilder
         options[:devlog] = t || "rendezvous"
         options[:devlog_function] = f
       end
+      parser.on("--node-tracking [INTERVAL]", "Take snapshots of the current nodes and print difference since last snapshot") do |interval|
+        options[:node_tracking] = true
+        options[:node_tracking_interval] = interval
+      end
       parser.separator "Options:"
       parser.on("--add-ids", "Add ids to stats command") do
         options[:add_ids] = true
@@ -39,7 +44,7 @@ module RokuBuilder
       @connection = nil
       case options[:profile].to_sym
       when :stats
-        print_stats
+        print_all_node_stats
       when :all
         print_all_nodes
       when :roots
@@ -100,10 +105,34 @@ module RokuBuilder
       connection.puts("enhanced_dev_log #{options[:devlog]} #{options[:devlog_function]}\n")
     end
 
+    def node_tracking(options:)
+      @options = options
+      @connection = nil
+      begin
+        current_nodes = nil
+        previous_nodes = nil
+        while true
+          current_nodes = get_stats
+          diff = diff_node_stats(current_nodes, previous_nodes)
+          print_stats(stats: diff)
+          previous_nodes = current_nodes
+          current_nodes = nil
+          STDIN.read(1)
+        end
+      rescue SystemExit, Interrupt
+        @connection.close if @connection
+      end
+    end
+
     private
 
     # Print the node stats
-    def print_stats
+    def print_all_node_stats
+      print_stats(stats: get_stats)
+    end
+
+    # Print the node stats
+    def get_stats
       end_reg = /<\/All_Nodes>/
       start_reg = /<All_Nodes>/
       lines = get_command_response(command: "sgnodes all", start_reg: start_reg, end_reg: end_reg)
@@ -111,15 +140,27 @@ module RokuBuilder
       stats = {"Total" => {count: 0}}
       doc = Oga.parse_xml(xml_string)
       handle_node(stats: stats, node: doc.children.first)
+      stats
+    end
+
+    def print_stats(stats:)
       stats = stats.to_a
-      stats = stats.sort {|a, b| b[1][:count] <=> a[1][:count]}
+      stats = stats.sort do |a, b|
+        next -1 if a[0] == "Total"
+        next 1 if b[0] == "Total"
+        b[1][:count] <=> a[1][:count]
+      end
       if @options[:add_ids]
-        printf "%30s | %5s | %s\n", "Name", "Count", "Ids"
+        printf "%30s | %5s | %s\n%s\n", "Name", "Count", "Ids", "-"*60
       else
-        printf "%30s | %5s\n", "Name", "Count"
+        printf "%30s | %5s\n%s\n", "Name", "Count", "-"*60
       end
       stats.each do |key_pair|
-        printf "%30s | %5d ", key_pair[0], key_pair[1][:count]
+        if key_pair[0] == "Total" and key_pair[1][:total]
+          printf "%30s | %5d %5d", key_pair[0], key_pair[1][:count], key_pair[1][:total]
+        else
+          printf "%30s | %5d", key_pair[0], key_pair[1][:count]
+        end
         if @options[:add_ids] and key_pair[1][:ids] and key_pair[1][:ids].count > 0
           id_string = key_pair[1][:ids].join(",")
           printf "[#{id_string}]"
@@ -129,15 +170,34 @@ module RokuBuilder
     end
 
     def handle_node(stats:,  node:)
-      node.children.each do |element|
-        next unless element.class == Oga::XML::Element
-        attributes = element.attributes.map{|attr| {"#{attr.name}": attr.value}}.reduce({}, :merge)
-        stats[element.name] ||= {count: 0, ids: []}
-        stats[element.name][:count] += 1
-        stats[element.name][:ids].push(attributes[:name]) if attributes[:name]
-        stats["Total"][:count] += 1
-        handle_node(stats: stats, node: element)
+      if node
+        node.children.each do |element|
+          next unless element.class == Oga::XML::Element
+          attributes = element.attributes.map{|attr| {"#{attr.name}": attr.value}}.reduce({}, :merge)
+          stats[element.name] ||= {count: 0, ids: []}
+          stats[element.name][:count] += 1
+          stats[element.name][:ids].push(attributes[:name]) if attributes[:name]
+          stats["Total"][:count] += 1
+          handle_node(stats: stats, node: element)
+        end
       end
+    end
+
+    def diff_node_stats(current, previous)
+      return current unless previous
+      diff = current.deep_dup
+      diff.each_pair do |node, stats|
+        if previous[node]
+          stats[:count] = stats[:count] - previous[node][:count]
+          if stats[:count] == 0 and node != "Total"
+            diff.delete(node)
+          elsif stats[:ids]
+            stats[:ids] = stats[:ids] - previous[node][:ids]
+          end
+        end
+      end
+      diff["Total"][:total] = current["Total"][:count]
+      diff
     end
 
     def print_all_nodes

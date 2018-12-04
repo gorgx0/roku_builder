@@ -26,7 +26,6 @@ module RokuBuilder
     def teardown
       manifest = File.join(@root_dir, "manifest")
       FileUtils.rm(manifest) if File.exist?(manifest)
-      remove_config
       @request_stubs.each {|req| remove_request_stub(req)}
     end
     def test_analyzer_parse_commands
@@ -412,17 +411,8 @@ module RokuBuilder
     end
 
     def set_config(config_content)
-      config = File.join(@root_dir, ".roku_builder_analyze.json")
-      File.open(config, "w") do |file|
-        file.write(config_content.to_json)
-      end
+      @config.project.merge!(config_content)
     end
-
-    def remove_config
-      config = File.join(@root_dir, ".roku_builder_analyze.json")
-      FileUtils.rm(config) if File.exist? config
-    end
-
 
     def print_all(warnings)
       warnings.each do |warning|
