@@ -98,7 +98,6 @@ module RokuBuilder
       expand_repeatable_stages
       fix_config_symbol_values
       RokuBuilder.process_hook(hook: "post_config_load", params: {config: @config})
-      byebug
     end
 
     def read_config(io)
