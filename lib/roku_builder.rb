@@ -213,6 +213,14 @@ module RokuBuilder
     parsed
   end
 
+  def self.process_hook(hook:, params:)
+    @@plugins.each do |plugin|
+      if plugin.respond_to?("#{hook}_hook".to_sym)
+        plugin.send("#{hook}_hook", params)
+      end
+    end
+  end
+
   # Run a system command
   # @param command [String] The command to be run
   # @return [String] The output of the command
