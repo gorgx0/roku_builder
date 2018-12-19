@@ -25,7 +25,7 @@ module RokuBuilder
         options[:genkey] = true
       end
       parser.separator "Options:"
-      parser.on("-i", "--inspect-package", "Inspect package after packaging") do
+      parser.on("--inspect-package", "Inspect package after packaging") do
         options[:inspect_package] = true
       end
     end

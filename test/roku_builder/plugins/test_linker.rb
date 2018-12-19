@@ -95,6 +95,40 @@ module RokuBuilder
       linker = Linker.new(config: config)
       linker.deeplink(options: options)
     end
+    def test_linker_link_sideload_input
+      @requests.push(stub_request(:post, "http://192.168.0.100:8060/input?a=A&b=B:C&d=a%5Cb").
+        to_return(status: 200, body: "", headers: {}))
+      @requests.push(stub_request(:post, "http://192.168.0.100:8060/keypress/Home").
+        to_return(status: 200, body: "", headers: {}))
+      @requests.push(stub_request(:post, "http://192.168.0.100/plugin_install").
+        to_return(status: 200, body: "Install Success", headers: {}))
+
+      options = {input: 'a:A, b:B:C, d:a\b',  working: true}
+      config, options = build_config_options_objects(LinkerTest, options, false)
+
+      linker = Linker.new(config: config)
+      linker.input(options: options)
+    end
+    def test_linker_link_app_input
+      @requests.push(stub_request(:post, "http://192.168.0.100:8060/input?a=A&b=B:C&d=a%5Cb").
+        to_return(status: 200, body: "", headers: {}))
+
+      options = {input: 'a:A, b:B:C, d:a\b', app_id: "1234"}
+      config, options = build_config_options_objects(LinkerTest, options, false)
+
+      linker = Linker.new(config: config)
+      linker.input(options: options)
+    end
+    def test_linker_link_nothing_input
+      @requests.push(stub_request(:post, "http://192.168.0.100:8060/input").
+        to_return(status: 200, body: "", headers: {}))
+
+      options = {input: ''}
+      config, options = build_config_options_objects(LinkerTest, options, false)
+
+      linker = Linker.new(config: config)
+      linker.input(options: options)
+    end
 
     def test_linker_list
       body = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<apps>\n\t

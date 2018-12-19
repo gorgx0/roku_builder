@@ -9,14 +9,18 @@ module RokuBuilder
     def self.commands
       {
         deeplink: {device: true, stage: true},
+        input: {device: true},
         applist: {device: true}
       }
     end
 
     def self.parse_options(parser:,  options:)
       parser.separator "Commands:"
-      parser.on("-o", "--deeplink OPTIONS", "Deeplink into app. Define options as keypairs. (eg. a:b, c:d,e:f)") do |o|
+      parser.on("-o", "--deeplink OPTIONS", "Launch and Deeplink into app. Define options as keypairs. (eg. a:b, c:d,e:f)") do |o|
         options[:deeplink] = o
+      end
+      parser.on("-i", "--input OPTIONS", "Deeplink into app. Define options as keypairs. (eg. a:b, c:d,e:f)") do |o|
+        options[:input] = o
       end
       parser.on("-A", "--app-list", "List currently installed apps") do
         options[:applist] = true
@@ -39,21 +43,11 @@ module RokuBuilder
       app_id = options[:app_id]
       app_id ||= "dev"
       path = "/launch/#{app_id}"
-      payload = RokuBuilder.options_parse(options: options[:deeplink])
+      send_options(path: path, options: options[:deeplink])
+    end
 
-      unless payload.keys.count > 0
-        @logger.warn "No options sent to launched app"
-      else
-        payload = parameterize(payload)
-        path = "#{path}?#{payload}"
-        @logger.info "Deeplink:"
-        @logger.info payload
-        @logger.info "CURL:"
-        @logger.info "curl -d '' '#{@url}:8060#{path}'"
-      end
-
-      response = multipart_connection(port: 8060).post path
-      @logger.fatal("Failed Deeplinking") unless response.success?
+    def input(options:)
+      send_options(path: "/input", options: options[:input])
     end
 
     # List currently installed apps
@@ -75,6 +69,24 @@ module RokuBuilder
     end
 
     private
+
+    def send_options(path:, options:)
+      payload = RokuBuilder.options_parse(options: options)
+
+      unless payload.keys.count > 0
+        @logger.warn "No options sent to launched app"
+      else
+        payload = parameterize(payload)
+        path = "#{path}?#{payload}"
+        @logger.info "Deeplink:"
+        @logger.info payload
+        @logger.info "CURL:"
+        @logger.info "curl -d '' '#{@url}:8060#{path}'"
+      end
+
+      response = multipart_connection(port: 8060).post path
+      @logger.fatal("Failed Deeplinking") unless response.success?
+    end
 
     # Parameterize options to be sent to the app
     # @param params [Hash] Parameters to be sent

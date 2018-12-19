@@ -50,6 +50,7 @@ module RokuBuilder
         execute
       rescue StandardError => e
         Logger.instance.fatal "#{e.class}: #{e.message}"
+        exit false
       end
     end
   end
