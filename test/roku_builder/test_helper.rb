@@ -16,7 +16,7 @@ require "minitest/utils"
 require "webmock/minitest"
 
 
-RokuBuilder::Logger.set_testing
+RokuBuilder.set_testing
 WebMock.disable_net_connect!
 def register_plugins(plugin_class)
   RokuBuilder.class_variable_set(:@@dev, false)

@@ -196,6 +196,11 @@ module RokuBuilder
           end
         end
       end
+      removed = previous.reject{|k,v| current.keys.include?(k)}
+      removed.each_pair do |node, stats|
+        stats[:count] *= -1
+        diff[node] = stats
+      end
       diff["Total"][:total] = current["Total"][:count]
       diff
     end

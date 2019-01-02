@@ -333,7 +333,7 @@ module RokuBuilder
         end
       }
       first = true
-      command_response = Proc.new { 
+      command_response = Proc.new {
         if first
           first = false
           [">>thread node calls: create     0 + op    24  @ 0.0% rendezvous",

@@ -1,3 +1,8 @@
+ = 4.11.1 =
+
+ - Fix node-tracking bug that would not track node removals that removed all of a given type of nodes
+ - Fix tests exiting early
+
  = 4.11.0 =
 
  - Add --input command to allow sending input parameters to running app

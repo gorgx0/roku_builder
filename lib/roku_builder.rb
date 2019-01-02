@@ -50,7 +50,7 @@ module RokuBuilder
         execute
       rescue StandardError => e
         Logger.instance.fatal "#{e.class}: #{e.message}"
-        exit false
+        exit false unless @@testing
       end
     end
   end
@@ -227,5 +227,10 @@ module RokuBuilder
   # @return [String] The output of the command
   def self.system(command:)
     `#{command}`.chomp
+  end
+
+  def self.set_testing
+    @@testing = true
+    Logger.set_testing
   end
 end
