@@ -1,3 +1,7 @@
+ = 4.11.2 =
+
+ - Print output from staging scripts
+
  = 4.11.1 =
 
  - Fix node-tracking bug that would not track node removals that removed all of a given type of nodes

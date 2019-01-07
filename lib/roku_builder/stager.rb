@@ -43,7 +43,12 @@ module RokuBuilder
         end
       when :script
         switch_directory
-        RokuBuilder.system(command: @scripts[:stage])
+        staging_logs = RokuBuilder.system(command: @scripts[:stage])
+        if !staging_logs.empty?
+          @logger.warn "===== Staging Logs Start ====="
+          puts staging_logs
+          @logger.warn "===== Staging Logs End ======="
+        end
       end
       @stage_success
     end
@@ -67,7 +72,13 @@ module RokuBuilder
         switch_directory_back
       when :script
         switch_directory
-        RokuBuilder.system(command: @scripts[:unstage])  if @scripts[:unstage]
+        if @scripts[:unstage]
+          unstaging_logs = RokuBuilder.system(command: @scripts[:unstage])
+          if !unstaging_logs.empty?
+            @logger.warn "===== Unstaging Logs Start ====="
+            puts unstaging_logs
+            @logger.warn "===== Unstaging Logs End ======="
+        end
         switch_directory_back
       end
       unstage_success
