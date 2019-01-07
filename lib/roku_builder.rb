@@ -39,7 +39,7 @@ module RokuBuilder
   # @param options [Hash] The options hash
   def self.run(options: nil)
     @@options = nil
-    @@testing = false
+    @@testing ||= false
     setup_plugins
     setup_options(options: options)
     return unless @@options

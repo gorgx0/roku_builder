@@ -78,6 +78,7 @@ module RokuBuilder
             @logger.warn "===== Unstaging Logs Start ====="
             puts unstaging_logs
             @logger.warn "===== Unstaging Logs End ======="
+          end
         end
         switch_directory_back
       end

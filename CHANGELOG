@@ -1,5 +1,10 @@
  = 4.11.2 =
 
+ - Fix syntax error
+ - Fix tests
+
+ = 4.11.2 =
+
  - Print output from staging scripts
 
  = 4.11.1 =
