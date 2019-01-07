@@ -46,7 +46,7 @@ module RokuBuilder
               attribute_config[:validations].each_pair do |type, value|
                 case type
                 when :integer
-                  unless @attributes[key].to_i.to_s == @attributes[key]
+                  unless "%0#{@attributes[key].length}i" % @attributes[key].to_i == @attributes[key]
                     add_warning(warning: :manifestInvalidValue, key: key)
                   end
                 when :float

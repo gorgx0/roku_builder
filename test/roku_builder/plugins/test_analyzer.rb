@@ -39,6 +39,7 @@ module RokuBuilder
     def test_clean_app
       warnings = test
       assert_equal Array, warnings.class
+      assert_equal 0, warnings.count
     end
     def test_manifest_duplicate_attribute
       warnings = test_manifest("manifest_duplicate_attribute")
