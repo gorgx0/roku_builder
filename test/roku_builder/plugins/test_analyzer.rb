@@ -70,6 +70,14 @@ module RokuBuilder
       assert_equal 2, warnings[0][:line]
       assert_equal "manifest", warnings[0][:path]
     end
+    def test_manifest_invalid_value_hex
+      warnings = test_manifest("manifest_invalid_value_hex")
+      assert_equal 1, warnings.count
+      assert_match(/splash_color/, warnings[0][:message])
+      assert_match(/bad/, warnings[0][:message])
+      assert_equal 9, warnings[0][:line]
+      assert_equal "manifest", warnings[0][:path]
+    end
     def test_manifest_invalid_value_float
       warnings = test_manifest("manifest_invalid_value_float")
       assert_equal 1, warnings.count

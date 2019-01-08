@@ -1,3 +1,8 @@
+ = 4.11.4 =
+
+ - Allow leading zeros on manifest integers
+ - Add missing hex manifest validation
+
  = 4.11.3 =
 
  - Fix syntax error

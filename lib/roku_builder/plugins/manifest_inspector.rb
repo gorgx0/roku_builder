@@ -49,6 +49,10 @@ module RokuBuilder
                   unless "%0#{@attributes[key].length}i" % @attributes[key].to_i == @attributes[key]
                     add_warning(warning: :manifestInvalidValue, key: key)
                   end
+                when :hex
+                  unless @attributes[key][0] == "#" and !@attributes[key][1..-1][/\H/]
+                    add_warning(warning: :manifestInvalidValue, key: key)
+                  end
                 when :float
                   unless @attributes[key].to_f.to_s == @attributes[key]
                     add_warning(warning: :manifestInvalidValue, key: key)
