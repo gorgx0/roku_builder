@@ -134,7 +134,7 @@ module RokuBuilder
       if local_config[:projects]
         local_config[:projects].each_pair do |key,value|
           unless !value.is_a?(Hash) or value[:directory]
-            local_config[:projects][key][:directory] = RokuBuilder.system(command: "pwd")
+            local_config[:projects][key][:directory] = Pathname.pwd.to_s
           end
         end
       end

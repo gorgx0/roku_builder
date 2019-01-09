@@ -1,3 +1,7 @@
+ = 4.11.5 =
+
+ - Fix Windows incompatibility
+
  = 4.11.4 =
 
  - Allow leading zeros on manifest integers
