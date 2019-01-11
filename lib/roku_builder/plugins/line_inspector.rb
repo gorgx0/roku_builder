@@ -29,9 +29,15 @@ module RokuBuilder
             in_xml_comment = true if line.gsub!(/<!--.*/, "")
           end
           @inspector_config.each do |line_inspector|
-            if /#{line_inspector[:regex]}/i.match(line)
+            match  = nil
+            if line_inspector[:case_sensitive]
+              match = /#{line_inspector[:regex]}/.match(line)
+            else
+              match = /#{line_inspector[:regex]}/i.match(line)
+            end
+            if match
               unless /'.*ignore-warning/i.match(full_line)
-                add_warning(inspector: line_inspector, file: file_path, line: line_number)
+                add_warning(inspector: line_inspector, file: file_path, line: line_number, match: match)
               end
             end
           end
@@ -44,10 +50,11 @@ module RokuBuilder
 
     private
 
-    def add_warning(inspector:,  file:, line:)
+    def add_warning(inspector:,  file:, line:, match: )
       @warnings.push(inspector.deep_dup)
       @warnings.last[:path] = file
       @warnings.last[:line] = line
+      @warnings.last[:match] = match
     end
   end
 end
