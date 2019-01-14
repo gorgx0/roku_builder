@@ -101,9 +101,9 @@ module RokuBuilder
       File.open(path, "w") do |file|
         @attributes.each_pair do |key,value|
           if value
-            file.puts "#{key}=#{value}"
+            file.write "#{key}=#{value}\n"
           else
-            file.puts key
+            file.write "#{key}\n"
           end
         end
       end
