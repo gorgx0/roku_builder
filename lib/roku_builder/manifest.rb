@@ -98,7 +98,7 @@ module RokuBuilder
       root_dir = @config.parsed[:root_dir]
       raise ManifestError, "Cannot Update zipped manifest" if File.extname(root_dir) == ".zip"
       path = File.join(root_dir, "manifest")
-      File.open(path, "w") do |file|
+      File.open(path, "wb") do |file|
         @attributes.each_pair do |key,value|
           if value
             file.write "#{key}=#{value}\n"

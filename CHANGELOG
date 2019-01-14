@@ -1,3 +1,15 @@
+ = 4.12.2 =
+
+ - Fix Windows incompatibility
+
+ = 4.12.1 =
+
+ - Fix Windows incompatibility
+
+ = 4.12.0 =
+
+ - Add Linter
+
  = 4.11.5 =
 
  - Fix Windows incompatibility
