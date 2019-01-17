@@ -3,6 +3,7 @@
 module RokuBuilder
   class ConfigValidator
 
+    DEPRICATED_FILES_FOLDERS  = -1
     VALID_CONFIG              = 0
     MISSING_DEVICES           = 1
     MISSING_DEVICES_DEFAULT   = 2
@@ -15,7 +16,7 @@ module RokuBuilder
     DEVICE_MISSING_PASSWORD   = 9
     PROJECT_MISSING_APP_NAME  = 10
     PROJECT_MISSING_DIRECTORY = 11
-    PROJECT_MISSING_FOLDERS   = 12
+    #                         = 12
     PROJECT_FOLDERS_BAD       = 13
     PROJECT_MISSING_FILES     = 14
     PROJECT_FILES_BAD         = 15
@@ -138,12 +139,12 @@ module RokuBuilder
       errors= [
         [PROJECT_MISSING_APP_NAME, (!project[:app_name])],
         [PROJECT_MISSING_DIRECTORY, (!project[:directory])],
-        [PROJECT_MISSING_FOLDERS, (!project[:folders])],
         [PROJECT_FOLDERS_BAD, (project[:folders] and !project[:folders].is_a?(Array))],
-        [PROJECT_MISSING_FILES, (!project[:files])],
+        [PROJECT_MISSING_FILES, (!project[:source_files] and !(project[:files] and project[:folders]))],
         [PROJECT_FILES_BAD, (project[:files] and !project[:files].is_a?(Array))],
         [MISSING_STAGE_METHOD, ( !project[:stage_method])],
-        [PROJECT_STAGE_METHOD_BAD, (![:git, :script, nil].include?(project[:stage_method]))]
+        [PROJECT_STAGE_METHOD_BAD, (![:git, :script, nil].include?(project[:stage_method]))],
+        [DEPRICATED_FILES_FOLDERS, (project[:files] or project[:folders])],
       ]
       process_errors(errors: errors)
     end
@@ -195,7 +196,7 @@ module RokuBuilder
         "A device config is missing its password.",
         "A project config is missing its app_name.", #10
         "A project config is missing its directorty.",
-        "A project config is missing its folders.",
+        "",
         "A project config's folders is not an array.",
         "A project config is missing its files.",
         "A project config's files is not an array.", #15
@@ -206,7 +207,9 @@ module RokuBuilder
         "A key is missing its password.", #20
         "A input mapping is invalid",
         "A key is missing from the keys section",
-        "A project is missing its stage method."
+        "A project is missing its stage method.",
+        #===============Warnings===============#
+        "Using depricated files/folders projects keys. Use the combined source_files instead" #-1
       ]
     end
   end

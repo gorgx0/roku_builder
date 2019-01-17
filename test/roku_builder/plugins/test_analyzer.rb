@@ -260,7 +260,7 @@ module RokuBuilder
     end
     def test_macosx_directory
       config = good_config(AnalyzerTest)
-      config[:projects][:project1][:folders].push("Test__MACOSX")
+      config[:projects][:project1][:source_files].push("Test__MACOSX")
       @config, @options = build_config_options_objects(AnalyzerTest, {analyze: true, working: true}, false, config)
       folder = File.join(@root_dir, "Test__MACOSX")
       Dir.mkdir(folder) unless File.exist?(folder)

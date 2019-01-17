@@ -104,14 +104,13 @@ module RokuBuilder
     end
 
     def setup_build_content()
-      content = {}
-      content[:excludes] = []
+      content = {
+        excludes: []
+      }
       if @options[:current]
-        content[:folders] = Dir.entries(@config.root_dir).select {|entry| File.directory? File.join(@config.root_dir, entry) and !(entry =='.' || entry == '..') }
-        content[:files] = Dir.entries(@config.root_dir).select {|entry| File.file? File.join(@config.root_dir, entry)}
+        content[:source_files] = Dir.entries(@config.root_dir).select {|entry| !(entry =='.' || entry == '..') }
       else
-        content[:folders] = @config.project[:folders]
-        content[:files] = @config.project[:files]
+        content[:source_files] = @config.project[:source_files]
         content[:excludes] = @config.project[:excludes] if @config.project[:excludes] and (@options[:exclude] or @options.exclude_command?)
       end
       content
@@ -121,20 +120,7 @@ module RokuBuilder
       path = file_path(:out)
       File.delete(path) if File.exist?(path)
       io = Zip::File.open(path, Zip::File::CREATE)
-      # Add folders to zip
-      content[:folders].each do |folder|
-        base_folder = File.join(@config.root_dir, folder)
-        if File.exist?(base_folder)
-          entries = Dir.entries(base_folder)
-          entries.delete(".")
-          entries.delete("..")
-          writeEntries(@config.root_dir, entries, folder, content[:excludes], io)
-        else
-          @logger.warn "Missing Folder: #{base_folder}"
-        end
-      end
-      # Add file to zip
-      writeEntries(@config.parsed[:root_dir], content[:files], "", content[:excludes], io)
+      writeEntries(@config.parsed[:root_dir], content[:source_files], "", content[:excludes], io)
       io.close()
     end
 
@@ -168,13 +154,11 @@ module RokuBuilder
       }
     end
     def copy_channel_files(content)
-      [:files, :folders].each do |type|
-        content[type].each do |entity|
-          begin
-            FileUtils.copy_entry(File.join(@config.parsed[:root_dir], entity), File.join(@target, entity))
-          rescue Errno::ENOENT
-            @logger.warn "Missing Entry: #{entity}"
-          end
+      content[:source_files].each do |entity|
+        begin
+          FileUtils.copy_entry(File.join(@config.parsed[:root_dir], entity), File.join(@target, entity))
+        rescue Errno::ENOENT
+          @logger.warn "Missing Entry: #{entity}"
         end
       end
     end

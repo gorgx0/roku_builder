@@ -97,7 +97,7 @@ module RokuBuilder
       merge_local_config
       expand_repeatable_stages
       fix_config_symbol_values
-      RokuBuilder.process_hook(hook: "post_config_load", params: {config: @config})
+      RokuBuilder.process_hook(hook: "post_config_load", params: {config: @config, options: @options})
     end
 
     def read_config(io)

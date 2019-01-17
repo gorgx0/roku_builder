@@ -1,3 +1,13 @@
+ = 4.13.0 =
+
+ - Add combined source_files project config key
+ - Depricate files and folders keys
+ - Pass options to post_config_load hook
+
+ = 4.12.3 =
+
+ - Fix Windows incompatibility
+
  = 4.12.2 =
 
  - Fix Windows incompatibility

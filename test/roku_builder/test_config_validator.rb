@@ -137,21 +137,32 @@ module RokuBuilder
 
     def test_config_manager_validate_project_folders
       config = good_config
+      config[:projects][:project1][:files] = ["manifest"]
       config[:projects][:project1][:folders] = nil
+      config[:projects][:project1][:source_files] = nil
       validator = ConfigValidator.new(config: config)
-      assert_equal [12], validator.instance_variable_get(:@codes)
+      assert_equal [14, -1], validator.instance_variable_get(:@codes)
     end
 
     def test_config_manager_validate_project_folders_is_array
       config = good_config
       config[:projects][:project1][:folders] = "Folders"
       validator = ConfigValidator.new(config: config)
-      assert_equal [13], validator.instance_variable_get(:@codes)
+      assert_equal [13, -1], validator.instance_variable_get(:@codes)
     end
 
     def test_config_manager_validate_project_files
       config = good_config
       config[:projects][:project1][:files] = nil
+      config[:projects][:project1][:folders] = ["images", "source"]
+      config[:projects][:project1][:source_files] = nil
+      validator = ConfigValidator.new(config: config)
+      assert_equal [14, -1], validator.instance_variable_get(:@codes)
+    end
+
+    def test_config_manager_validate_project_source_files
+      config = good_config
+      config[:projects][:project1][:source_files] = nil
       validator = ConfigValidator.new(config: config)
       assert_equal [14], validator.instance_variable_get(:@codes)
     end
@@ -160,7 +171,7 @@ module RokuBuilder
       config = good_config
       config[:projects][:project1][:files] = "Files"
       validator = ConfigValidator.new(config: config)
-      assert_equal [15], validator.instance_variable_get(:@codes)
+      assert_equal [15, -1], validator.instance_variable_get(:@codes)
     end
 
     def test_config_manager_validate_project_key

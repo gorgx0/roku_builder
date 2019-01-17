@@ -77,8 +77,7 @@ def good_config(klass=nil)
     default: :project1,
     project1: {
     directory: root_dir,
-    folders: ["images","source"],
-    files: ["manifest"],
+    source_files: ["manifest", "images", "source"],
     app_name: "<app name>",
     stage_method: :git,
     stages:{
@@ -93,8 +92,7 @@ def good_config(klass=nil)
   },
     project2: {
     directory: root_dir,
-    folders: ["images","source"],
-    files: ["manifest"],
+    source_files: ["images","source","manifest"],
     app_name: "<app name>",
     stage_method: :script,
     stages:{

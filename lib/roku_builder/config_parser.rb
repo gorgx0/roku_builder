@@ -120,6 +120,7 @@ module RokuBuilder
         @parsed[:project] = @config[:projects][@options[:project].to_sym].dup
         raise ParseError, "Unknown Project: #{@options[:project]}" unless @parsed[:project]
         set_project_directory
+        convert_to_source_files
         check_for_working
       end
     end
@@ -130,8 +131,7 @@ module RokuBuilder
       raise ParseError, "Missing Manifest: #{manifest}" unless File.exist?(manifest)
       @parsed[:project] = {
         directory: pwd,
-        folders: nil,
-        files: nil,
+        source_files: nil,
         stage_method: :current
       }
     end
@@ -142,6 +142,14 @@ module RokuBuilder
       end
       unless Dir.exist?(@parsed[:project][:directory])
         raise ParseError, "Missing project directory: #{@parsed[:project][:directory]}"
+      end
+    end
+
+    def convert_to_source_files
+      unless @parsed[:project][:source_files]
+        @parsed[:project][:source_files] = @parsed[:project][:files] + @parsed[:project][:folders]
+        @parsed[:project].delete(:files)
+        @parsed[:project].delete(:folders)
       end
     end
 
