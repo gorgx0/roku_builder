@@ -194,17 +194,18 @@ module RokuBuilder
     end
 
     def read_char
-      STDIN.echo = false
-      STDIN.raw!
-      input = STDIN.getc.chr
-      if input == "\e" then
-        input << STDIN.read_nonblock(3) rescue nil
-        input << STDIN.read_nonblock(2) rescue nil
+      STDIN.noecho do |io|
+        io.raw!
+        input = STDIN.getc.chr
+        begin
+          if input == "\e" then
+            input << STDIN.read_nonblock(3) rescue nil
+            input << STDIN.read_nonblock(2) rescue nil
+          end
+        end
+        io.cooked!
+        input
       end
-      input
-    ensure
-      STDIN.echo = true
-      STDIN.cooked!
     end
 
     def handle_navigate_input(char)
