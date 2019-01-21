@@ -1,3 +1,7 @@
+ = 4.14.0 =
+
+ - Add plugin staging method
+
  = 4.13.0 =
 
  - Add combined source_files project config key
