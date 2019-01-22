@@ -3,18 +3,20 @@
 module RokuBuilder
 
   class LineInspector
-    def initialize(config:, raf:, inspector_config:)
+    def initialize(config:, raf:, inspector_config:, indent_config:)
       @config = config
       @raf_inspector = raf
       @inspector_config = inspector_config
+      @indent_config = indent_config
     end
 
     def run(file_path)
       @warnings = []
       File.open(file_path) do |file|
-        line_number = 0
         in_xml_comment = false
-        file.readlines.each do |line|
+        indent_inspector = IndentationInspector.new(rules: @indent_config, path: file_path)
+        file.readlines.each_with_index do |line, line_number|
+          indent_inspector.check_line(line: line, number: line_number)
           full_line = line.dup
           line = line.partition("'").first if file_path.end_with?(".brs")
           if file_path.end_with?(".xml")
@@ -42,8 +44,8 @@ module RokuBuilder
             end
           end
           @raf_inspector.inspect_line(line: line, file: file_path, line_number: line_number)
-          line_number += 1
         end
+        @warnings += indent_inspector.warnings
       end
       @warnings
     end
