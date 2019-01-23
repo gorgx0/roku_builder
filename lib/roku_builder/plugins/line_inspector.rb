@@ -14,9 +14,9 @@ module RokuBuilder
       @warnings = []
       File.open(file_path) do |file|
         in_xml_comment = false
-        indent_inspector = IndentationInspector.new(rules: @indent_config, path: file_path)
+        indent_inspector = IndentationInspector.new(rules: @indent_config, path: file_path) if @indent_config
         file.readlines.each_with_index do |line, line_number|
-          indent_inspector.check_line(line: line, number: line_number)
+          indent_inspector.check_line(line: line, number: line_number) if indent_inspector
           full_line = line.dup
           line = line.partition("'").first if file_path.end_with?(".brs")
           if file_path.end_with?(".xml")
@@ -45,7 +45,7 @@ module RokuBuilder
           end
           @raf_inspector.inspect_line(line: line, file: file_path, line_number: line_number)
         end
-        @warnings += indent_inspector.warnings
+        @warnings += indent_inspector.warnings if indent_inspector
       end
       @warnings
     end

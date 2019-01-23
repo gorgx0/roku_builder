@@ -1,3 +1,7 @@
+ = 4.15.0 =
+
+ - Add indentation checking to analyze command
+
  = 4.14.1 =
 
  - Rebuild of gem

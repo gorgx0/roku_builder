@@ -27,10 +27,14 @@ module RokuBuilder
       case @type
       when :xml
         if @prev_line and @prev_line =~ /<[^?!\/][^>]*[^\/]>/
-          @ind += @count
+          unless @prev_line =~ /<([^>\/]*)>.*<\/\1*>/
+            @ind += @count
+          end
         end
         if line =~ /<\/[^>]*>/
-          @ind -= @count
+          unless line =~ /<([^>\/]*)>.*<\/\1*>/
+            @ind -= @count
+          end
         end
       when :brs
         if @prev_line
@@ -70,7 +74,7 @@ module RokuBuilder
     end
 
     def add_warning(line:)
-      @warnings.push({severity: "warning", message: 'Incorrect Indentation.'})
+      @warnings.push({severity: "warning", message: 'Incorrect indentation'})
       @warnings.last[:path] = @path
       @warnings.last[:line] = line
     end

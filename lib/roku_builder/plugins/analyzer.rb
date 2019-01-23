@@ -33,6 +33,7 @@ module RokuBuilder
       analyzer_config = get_config("inspector_config.json")
       performance_config = get_config("performance_config.json")
       linter_config = get_config(".roku_builder_linter.json", true)
+      linter_config ||= {}
       @inspector_config = analyzer_config[:inspectors]
       loader = Loader.new(config: @config)
       Dir.mktmpdir do |dir|
@@ -49,7 +50,7 @@ module RokuBuilder
             if File.file?(file_path) and file_path.end_with?(".brs", ".xml")
               line_inspector_config = analyzer_config[:lineInspectors]
               line_inspector_config += performance_config
-              line_inspector_config += linter_config[:rules] if linter_config
+              line_inspector_config += linter_config[:rules] if linter_config[:rules]
               line_inspector = LineInspector.new(config: @config, raf: raf_inspector, inspector_config: line_inspector_config, indent_config: linter_config[:indentation])
               @warnings.concat(line_inspector.run(file_path))
             end
