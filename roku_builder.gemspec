@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "win32-security",      "~> 0.5" # For windows compatibility
   spec.add_dependency "image_size",          "~> 2.0"
 
-  spec.add_development_dependency "bundler",           "~> 1.7"
+  spec.add_development_dependency "bundler",           "~> 2.0"
   spec.add_development_dependency "rake",              "~> 12.0"
   spec.add_development_dependency "byebug",            "~> 10.0"
   spec.add_development_dependency "minitest",          "~> 5.10"

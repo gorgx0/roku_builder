@@ -31,11 +31,13 @@ module RokuBuilder
             in_xml_comment = true if line.gsub!(/<!--.*/, "")
           end
           @inspector_config.each do |line_inspector|
+            line_to_check = line
+            line_to_check = full_line if line_inspector[:include_comments]
             match  = nil
             if line_inspector[:case_sensitive]
-              match = /#{line_inspector[:regex]}/.match(line)
+              match = /#{line_inspector[:regex]}/.match(line_to_check)
             else
-              match = /#{line_inspector[:regex]}/i.match(line)
+              match = /#{line_inspector[:regex]}/i.match(line_to_check)
             end
             if match
               unless /'.*ignore-warning/i.match(full_line)
