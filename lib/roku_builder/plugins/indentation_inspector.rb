@@ -38,7 +38,9 @@ module RokuBuilder
         end
       when :brs
         if @prev_line
-          if @prev_line =~ /[\{\[\(:]$/
+          if @prev_line =~ /^\'/
+            # Don't change indentation
+          elsif @prev_line =~ /[\{\[\(:]$/
             @ind += @count
           elsif @prev_line =~ /^\s*\bfunction\b|^\s*\bsub\b/i
             @ind += @count
@@ -50,11 +52,13 @@ module RokuBuilder
             @ind += @count
           end
         end
-        if line =~ /^\s*[\}\]\)]/
+        if line =~ /^\'/
+          # Don't change indentation
+        elsif line =~ /^\s*[\}\]\)]/
           @ind -= @count
         elsif line =~ /^\s*\bfunction\b|^\s*\bsub\b/i
           @ind -= 0
-        elsif line =~ /^\s*#?end\b|^\s*#?endif\b|^\s*endfor\b|^\s*\bnext\b/i
+        elsif line =~ /^\s*:?\s*#?end\b|^\s*#?endif\b|^\s*endfor\b|^\s*\bnext\b/i
           @ind -= @count
         elsif line =~ /^\s*#?else\b|^\s*elseif\b/i
           @ind -= @count
