@@ -87,6 +87,7 @@ module RokuBuilder
   def self.setup_plugins
     load_plugins
     process_plugins
+    validate_plugins
   end
 
   def self.load_plugins
@@ -142,6 +143,12 @@ module RokuBuilder
       plugin.commands.keys.each do |command|
         raise ImplementationError, "Missing command method '#{command}' in #{plugin}" unless  plugin.instance_methods.include?(command)
       end
+    end
+  end
+
+  def self.validate_plugins
+    @@plugins.each do |plugin|
+      plugin.validate
     end
   end
 

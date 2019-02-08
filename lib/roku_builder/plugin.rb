@@ -26,5 +26,9 @@ module RokuBuilder
     def dependencies
       []
     end
+
+    def validate
+      # No default validations
+    end
   end
 end

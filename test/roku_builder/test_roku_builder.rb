@@ -210,6 +210,16 @@ module RokuBuilder
       end
       config.verify
     end
+    def test_roku_builder_validate_success
+      RokuBuilder.register_plugin(TestPlugin)
+      RokuBuilder.validate_plugins
+    end
+    def test_roku_builder_validate_failure
+      RokuBuilder.register_plugin(TestPlugin5)
+      assert_raises InvalidConfig do
+        RokuBuilder.validate_plugins
+      end
+    end
   end
   class TestPlugin
     extend Plugin
@@ -233,6 +243,15 @@ module RokuBuilder
     extend Plugin
     def self.commands
       {test: {}}
+    end
+  end
+  class TestPlugin5
+    extend Plugin
+    def self.commands
+      {}
+    end
+    def self.validate
+      raise InvalidConfig
     end
   end
 end

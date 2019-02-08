@@ -1,3 +1,7 @@
+ = 4.16.0 =
+
+ - Allow plugins to validate themselves
+
  = 4.15.2 =
 
  - Allow linter checks to check comments
