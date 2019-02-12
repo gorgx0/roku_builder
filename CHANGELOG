@@ -1,3 +1,7 @@
+ = 4.16.1 =
+
+ - Fixes for indentation checker
+
  = 4.16.0 =
 
  - Allow plugins to validate themselves

@@ -1,6 +1,6 @@
 [
   {
-    "regex": "\\sas\\s(Object|Boolean|String|Integer|LongInteger|Double|Float|Function|Dynamic)",
+    "regex": "\\sas\\s+(Object|Boolean|String|Integer|LongInteger|Double|Float|Function|Dynamic)",
     "severity": "warning",
     "message": "Found function return type. Consider removing"
   } ,

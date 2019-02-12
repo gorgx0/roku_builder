@@ -42,6 +42,8 @@ module RokuBuilder
             # Don't change indentation
           elsif @prev_line =~ /[\{\[\(:]$/
             @ind += @count
+          elsif @prev_line =~ /:\s*\bfunction\b|:\s*\bsub\b/i
+            @ind += @count
           elsif @prev_line =~ /^\s*\bfunction\b|^\s*\bsub\b/i
             @ind += @count
           elsif @prev_line =~ /^\s*#?if\b|^\s*#?else\b/i
