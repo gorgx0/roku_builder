@@ -121,7 +121,7 @@ module RokuBuilder
       all_text += txt
       while line = all_text.slice!(/^.*\n/) do
         if !line.strip.empty?
-          puts line if regexp.nil? or regexp.match(line)
+          puts line if regexp.nil? or line.match(regexp)
         end
       end
 

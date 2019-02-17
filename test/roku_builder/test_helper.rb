@@ -16,7 +16,7 @@ require "minitest/utils"
 require "webmock/minitest"
 
 
-RokuBuilder::Logger.set_testing
+RokuBuilder.set_testing
 WebMock.disable_net_connect!
 def register_plugins(plugin_class)
   RokuBuilder.class_variable_set(:@@dev, false)
@@ -77,8 +77,7 @@ def good_config(klass=nil)
     default: :project1,
     project1: {
     directory: root_dir,
-    folders: ["resources","source"],
-    files: ["manifest"],
+    source_files: ["manifest", "images", "source"],
     app_name: "<app name>",
     stage_method: :git,
     stages:{
@@ -93,8 +92,7 @@ def good_config(klass=nil)
   },
     project2: {
     directory: root_dir,
-    folders: ["resources","source"],
-    files: ["manifest"],
+    source_files: ["images","source","manifest"],
     app_name: "<app name>",
     stage_method: :script,
     stages:{

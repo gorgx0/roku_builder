@@ -97,6 +97,7 @@ module RokuBuilder
       merge_local_config
       expand_repeatable_stages
       fix_config_symbol_values
+      RokuBuilder.process_hook(hook: "post_config_load", params: {config: @config, options: @options})
     end
 
     def read_config(io)
@@ -133,7 +134,7 @@ module RokuBuilder
       if local_config[:projects]
         local_config[:projects].each_pair do |key,value|
           unless !value.is_a?(Hash) or value[:directory]
-            local_config[:projects][key][:directory] = RokuBuilder.system(command: "pwd")
+            local_config[:projects][key][:directory] = Pathname.pwd.to_s
           end
         end
       end
@@ -182,7 +183,7 @@ module RokuBuilder
     end
 
     def fix_config_symbol_values
-      if @config[:devices]
+      if @config[:devices] and @config[:devices][:default]
         @config[:devices][:default] = @config[:devices][:default].to_sym
       end
       if @config[:projects]
@@ -192,7 +193,9 @@ module RokuBuilder
     end
 
     def fix_project_config_symbol_values
-      @config[:projects][:default] = @config[:projects][:default].to_sym
+      if @config[:projects][:default]
+        @config[:projects][:default] = @config[:projects][:default].to_sym
+      end
       @config[:projects].each_pair do |key,value|
         next if is_skippable_project_key? key
         if value[:stage_method]

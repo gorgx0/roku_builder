@@ -298,5 +298,15 @@ module RokuBuilder
       refute_nil config.input_mappings
       assert_equal ["home", "Home"], config.input_mappings[:a]
     end
+    def test_config_no_default_device
+      options = build_options({config: File.join(test_files_path(ConfigTest), "no_default_project.json"), validate: true})
+      config = Config.new(options: options)
+      config.load
+    end
+    def test_config_no_default_project
+      options = build_options({config: File.join(test_files_path(ConfigTest), "no_default_device.json"), validate: true})
+      config = Config.new(options: options)
+      config.load
+    end
   end
 end

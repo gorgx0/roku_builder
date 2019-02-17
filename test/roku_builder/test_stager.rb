@@ -273,12 +273,26 @@ module RokuBuilder
     end
     def test_stager_stage_script
       build_config_options({validate: true, stage: "production", project: "project2"})
-      RokuBuilder.stub(:system, nil) do
+      RokuBuilder.stub(:system, "") do
         stager = Stager.new(config: @config, options: @options)
         assert stager.stage
         assert stager.unstage
       end
     end
-
+    def test_stager_stage_script_output
+      logged_message = ""
+      log_message = lambda { |message| logged_message = message}
+      build_config_options({validate: true, stage: "production", project: "project2"})
+      RokuBuilder.stub(:system, "warning") do
+        stager = Stager.new(config: @config, options: @options)
+        stager.stub(:puts, log_message) do
+          assert stager.stage
+          assert_match "warning", logged_message
+          logged_message = ""
+          assert stager.unstage
+          assert_match "warning", logged_message
+        end
+      end
+    end
   end
 end

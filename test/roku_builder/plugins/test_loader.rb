@@ -112,5 +112,14 @@ module RokuBuilder
         loader.delete(options: @options)
       end
     end
+    def test_copy_files
+      loader = Loader.new(config: @config)
+      Dir.mktmpdir do |dir|
+        loader.copy(options: @options, path: dir)
+        assert File.exist?(File.join(dir, "manifest"))
+        assert File.exist?(File.join(dir, "source", "b"))
+        assert File.exist?(File.join(dir, "source", "c", "d"))
+      end
+    end
   end
 end

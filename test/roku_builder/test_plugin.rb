@@ -30,6 +30,14 @@ module RokuBuilder
       assert_equal Array, TestClass2.dependencies.class
       assert_equal TestClass, TestClass2.dependencies[0]
     end
+    def test_module_validate_none
+      TestClass.validate
+    end
+    def test_module_validate_failure
+      assert_raises InvalidConfig do
+        TestClass2.validate
+      end
+    end
   end
   class TestClass
     extend Plugin
@@ -42,6 +50,9 @@ module RokuBuilder
     end
     def self.dependencies
       [TestClass]
+    end
+    def self.validate
+      raise InvalidConfig
     end
   end
 end

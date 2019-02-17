@@ -1,0 +1,31 @@
+{
+  "devices": {
+    "roku": {
+      "ip": "111.222.333.444",
+      "user": "user",
+      "password": "pass"
+    }
+  },
+  "projects": {
+    "default": "p1",
+    "p1": {
+      "directory": "/tmp",
+      "folders": ["resources","source"],
+      "files": ["manifest"],
+      "app_name": "app",
+      "stage_method": "git",
+      "stages":{
+        "production": {
+          "branch": "master",
+          "key": {
+            "keyed_pkg": "/tmp/package.pkg",
+            "password": "password"
+          }
+        }
+      }
+    }
+  },
+  "input_mappings": {
+    "a": ["home", "Home"]
+  }
+}

@@ -25,6 +25,8 @@ require "fileutils"
 require "tempfile"
 require "tmpdir"
 require "zip"
+#analyzer
+require "image_size"
 
 
 Dir.glob(File.join(File.dirname(__FILE__), "roku_builder", "*.rb")).each do |path|
@@ -37,6 +39,7 @@ module RokuBuilder
   # @param options [Hash] The options hash
   def self.run(options: nil)
     @@options = nil
+    @@testing ||= false
     setup_plugins
     setup_options(options: options)
     return unless @@options
@@ -48,6 +51,7 @@ module RokuBuilder
         execute
       rescue StandardError => e
         Logger.instance.fatal "#{e.class}: #{e.message}"
+        exit false unless @@testing
       end
     end
   end
@@ -83,6 +87,7 @@ module RokuBuilder
   def self.setup_plugins
     load_plugins
     process_plugins
+    validate_plugins
   end
 
   def self.load_plugins
@@ -138,6 +143,12 @@ module RokuBuilder
       plugin.commands.keys.each do |command|
         raise ImplementationError, "Missing command method '#{command}' in #{plugin}" unless  plugin.instance_methods.include?(command)
       end
+    end
+  end
+
+  def self.validate_plugins
+    @@plugins.each do |plugin|
+      plugin.validate
     end
   end
 
@@ -211,10 +222,23 @@ module RokuBuilder
     parsed
   end
 
+  def self.process_hook(hook:, params:)
+    @@plugins.each do |plugin|
+      if plugin.respond_to?("#{hook}_hook".to_sym)
+        plugin.send("#{hook}_hook", params)
+      end
+    end
+  end
+
   # Run a system command
   # @param command [String] The command to be run
   # @return [String] The output of the command
   def self.system(command:)
     `#{command}`.chomp
+  end
+
+  def self.set_testing
+    @@testing = true
+    Logger.set_testing
   end
 end

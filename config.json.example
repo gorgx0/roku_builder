@@ -12,8 +12,7 @@
     "project_dir": "<optional parent directory for all projects>",
     "<project id>": {
       "directory": "<path/to/repo>",
-      "folders": ["resources","source"],
-      "files": ["manifest"],
+      "source_files": ["resources","source", "manifest"],
       "excludes": [],
       "app_name": "<app name>",
       "stage_method": "<git|script>",

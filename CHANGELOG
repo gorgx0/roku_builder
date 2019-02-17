@@ -1,3 +1,146 @@
+ = 4.16.1 =
+
+ - Fixes for indentation checker
+
+ = 4.16.0 =
+
+ - Allow plugins to validate themselves
+
+ = 4.15.2 =
+
+ - Allow linter checks to check comments
+
+ = 4.15.1 =
+
+ - Fixes for indentation checker
+
+ = 4.15.0 =
+
+ - Add indentation checking to analyze command
+
+ = 4.14.1 =
+
+ - Rebuild of gem
+
+ = 4.14.0 =
+
+ - Add plugin staging method
+
+ = 4.13.0 =
+
+ - Add combined source_files project config key
+ - Depricate files and folders keys
+ - Pass options to post_config_load hook
+
+ = 4.12.3 =
+
+ - Fix Windows incompatibility
+
+ = 4.12.2 =
+
+ - Fix Windows incompatibility
+
+ = 4.12.1 =
+
+ - Fix Windows incompatibility
+
+ = 4.12.0 =
+
+ - Add Linter
+
+ = 4.11.5 =
+
+ - Fix Windows incompatibility
+
+ = 4.11.4 =
+
+ - Allow leading zeros on manifest integers
+ - Add missing hex manifest validation
+
+ = 4.11.3 =
+
+ - Fix syntax error
+ - Fix tests
+
+ = 4.11.2 =
+
+ - Print output from staging scripts
+
+ = 4.11.1 =
+
+ - Fix node-tracking bug that would not track node removals that removed all of a given type of nodes
+ - Fix tests exiting early
+
+ = 4.11.0 =
+
+ - Add --input command to allow sending input parameters to running app
+
+ = 4.10.1 =
+
+ - Remove debug code
+
+ = 4.10.0 =
+
+ - Add ability for plugins to add post_load_config hooks
+ - Update Dependencies
+
+ = 4.9.5 =
+
+ - Add --node-tracking command to monitor changes in node counts
+
+ = 4.9.4 =
+
+ - Move Analyzer config to main config
+
+ = 4.9.3 =
+
+ - Fix crash on invlaid config
+ - Prevent loading incompatable file types
+ - Update Analyzer results for API access
+
+ = 4.9.2 =
+
+ - Cosmetic fixes
+
+ = 4.9.1 =
+
+ - Performance check bug fixes
+
+ = 4.9.0 =
+
+ - Add performance checks to --analyze command
+
+ = 4.8.2 =
+
+ - Sort --profile textures command
+
+ = 4.8.1 =
+
+ - Add missing manifest validator
+
+ = 4.8.0 =
+
+ - Add Static Analyzer
+
+ = 4.7.2 =
+
+ - Fix monitor regexp
+
+ = 4.7.1 =
+
+ - Update Dependencies
+
+ = 4.7.0 =
+
+ - Add Repeatable stages
+
+ = 4.6.2 =
+
+ - Stripe newlines from deeplink params
+ - Add verbose print file path when leaving built zip
+ - Fix dev plugin loading
+ - Update Dependencies
+
  = 4.6.1 =
 
  - Prevent double loading configs

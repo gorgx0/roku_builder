@@ -11,6 +11,7 @@ module RokuBuilder
       @method = get_method
       @ref = get_git_ref
       @scripts = get_scripts
+      @plugin = get_plugin
       @root_dir = config.root_dir
       @logger = Logger.instance
       @stage_success = true
@@ -43,7 +44,14 @@ module RokuBuilder
         end
       when :script
         switch_directory
-        RokuBuilder.system(command: @scripts[:stage])
+        staging_logs = RokuBuilder.system(command: @scripts[:stage])
+        if !staging_logs.empty?
+          @logger.warn "===== Staging Logs Start ====="
+          puts staging_logs
+          @logger.warn "===== Staging Logs End ======="
+        end
+      when :plugin
+        @plugin.stage(options: @options)
       end
       @stage_success
     end
@@ -67,8 +75,17 @@ module RokuBuilder
         switch_directory_back
       when :script
         switch_directory
-        RokuBuilder.system(command: @scripts[:unstage])  if @scripts[:unstage]
+        if @scripts[:unstage]
+          unstaging_logs = RokuBuilder.system(command: @scripts[:unstage])
+          if !unstaging_logs.empty?
+            @logger.warn "===== Unstaging Logs Start ====="
+            puts unstaging_logs
+            @logger.warn "===== Unstaging Logs End ======="
+          end
+        end
         switch_directory_back
+      when :plugin
+        @plugin.unstage(options: @options)
       end
       unstage_success
     end
@@ -93,6 +110,12 @@ module RokuBuilder
 
     def get_scripts
       @config.stage[:script] if @config.stage
+    end
+
+    def get_plugin
+      if @config.project and @config.project[:staging_plugin]
+        RokuBuilder.plugins[RokuBuilder.plugins.index{|p| p.to_s == @config.project[:staging_plugin]}].new(config: @config)
+      end
     end
 
     def switch_directory

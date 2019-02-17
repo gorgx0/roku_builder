@@ -1,0 +1,27 @@
+[
+  {
+    "regex": "\\sas\\s+(Object|Boolean|String|Integer|LongInteger|Double|Float|Function|Dynamic)",
+    "severity": "warning",
+    "message": "Found function return type. Consider removing"
+  } ,
+  {
+    "regex": "DoesExist",
+    "severity": "warning",
+    "message": "Found DoesExist check. Try using invalid check on dot reference"
+  },
+  {
+    "regex": "[^\\s]+\\[\"[^\"]+\"\\]",
+    "severity": "warning",
+    "message": "Found AA String reference. Try switching to dot reference"
+  },
+  {
+    "regex": "FOR.*\\s+TO\\s+",
+    "severity": "warning",
+    "message": "For loop found. Try switching to a For Each loop"
+  },
+  {
+    "regex": "\"roRegex\"",
+    "severity": "warning",
+    "message": "Regexp found. Avoid if possible"
+  }
+]

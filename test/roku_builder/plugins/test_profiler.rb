@@ -20,6 +20,38 @@ module RokuBuilder
       parser.parse! argv
       assert_equal "command", options[:profile]
     end
+    def test_profiler_node_tracking
+      options = {profile: "stats"}
+      config, options = build_config_options_objects(ProfilerTest, options, false)
+      waitfor = Proc.new do |telnet_config, &blk|
+        assert_equal(/.+/, telnet_config["Match"])
+        assert_equal(1, telnet_config["Timeout"])
+        txt = "<All_Nodes><NodeA /><NodeB /><NodeC><NodeD /></NodeC></All_Nodes>\n"
+        blk.call(txt)
+        true
+      end
+      count = 0
+      read_stub = Proc.new do |size|
+        raise SystemExit if count = 2
+        count += 1
+      end
+      connection = Minitest::Mock.new
+      profiler = Profiler.new(config: config)
+
+      connection.expect(:puts, nil, ["sgnodes all\n"])
+      connection.expect(:waitfor, nil, &waitfor)
+      connection.expect(:close, nil)
+
+      Net::Telnet.stub(:new, connection) do
+        profiler.stub(:printf, nil) do
+          STDIN.stub(:read, read_stub) do
+            profiler.node_tracking(options: options)
+          end
+        end
+      end
+
+      connection.verify
+    end
     def test_profiler_stats
       options = {profile: "stats"}
       config, options = build_config_options_objects(ProfilerTest, options, false)
@@ -301,7 +333,7 @@ module RokuBuilder
         end
       }
       first = true
-      command_response = Proc.new { 
+      command_response = Proc.new {
         if first
           first = false
           [">>thread node calls: create     0 + op    24  @ 0.0% rendezvous",

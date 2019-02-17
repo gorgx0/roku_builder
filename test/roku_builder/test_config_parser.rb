@@ -196,7 +196,7 @@ module RokuBuilder
       assert_equal "/tmp/project2", configs[:project][:directory]
     end
 
-    def test_manifest_config_project_directory_select
+    def test_manifest_config_project_directory_select_full_path
       options = build_options({validate: true, working: true})
       options.define_singleton_method(:source_commands){[:validate]}
       config = good_config(ConfigParserTest)
